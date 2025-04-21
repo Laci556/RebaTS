@@ -39,14 +39,14 @@
     "@rebats/prettier": "workspace:*",
     "@types/bun": "latest",
     "@types/pg": "^8.11.11",
-    "drizzle-kit": "^1.0.0-beta.1-bd417c1",
+    "drizzle-kit": "beta",
     "expect-type": "^1.2.1",
     "pg": "^8.14.1",
     "tsup": "^8.4.0"
   },
   "peerDependencies": {
     "@rebats/core": "workspace:*",
-    "drizzle-orm": "^1.0.0-beta.1-bd417c1",
+    "drizzle-orm": "beta",
     "typescript": "^5.0.0"
   }
 }
