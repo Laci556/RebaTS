@@ -1,5 +1,11 @@
 # @rebats/core
 
+## 0.0.6
+
+### Patch Changes
+
+- f0dac00: Bump versions
+
 ## 0.0.5
 
 ### Patch Changes
