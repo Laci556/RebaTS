@@ -41,7 +41,9 @@ if (
   process.exit(0);
 }
 
-await $`bunx turbo run publish-package ${packagesToPublish
-  .filter((pkg) => pkg.status === "publishing")
-  .map((pkg) => `--filter=${pkg.packageJson.name}`)
-  .join(" ")}`;
+await $`bunx turbo run publish-package ${{
+  raw: packagesToPublish
+    .filter((pkg) => pkg.status === "publishing")
+    .map((pkg) => `--filter=${pkg.packageJson.name}`)
+    .join(" "),
+}}`;

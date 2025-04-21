@@ -37,7 +37,7 @@
     },
     "packages/core": {
       "name": "@rebats/core",
-      "version": "0.0.2",
+      "version": "0.0.5",
       "devDependencies": {
         "@ark/attest": "^0.45.11",
         "@rebats/prettier": "workspace:*",
@@ -51,7 +51,7 @@
     },
     "packages/drizzle": {
       "name": "@rebats/drizzle",
-      "version": "0.0.2",
+      "version": "0.0.5",
       "devDependencies": {
         "@electric-sql/pglite": "^0.2.17",
         "@libsql/client": "^0.15.2",
@@ -71,7 +71,7 @@
     },
     "packages/prettier": {
       "name": "@rebats/prettier",
-      "version": "0.0.0",
+      "version": "0.0.2",
       "devDependencies": {
         "prettier": "^3.5.2",
         "prettier-plugin-organize-imports": "^4.1.0",
@@ -80,7 +80,7 @@
     },
     "packages/prisma": {
       "name": "@rebats/prisma",
-      "version": "0.0.2",
+      "version": "0.0.5",
       "devDependencies": {
         "@rebats/prettier": "workspace:*",
         "@types/bun": "latest",
