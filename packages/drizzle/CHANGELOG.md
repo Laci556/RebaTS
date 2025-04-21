@@ -1,5 +1,13 @@
 # @rebats/drizzle
 
+## 0.0.9
+
+### Patch Changes
+
+- 4ae5742: Fix package.json repository for provenance
+- Updated dependencies [4ae5742]
+  - @rebats/core@0.0.9
+
 ## 0.0.8
 
 ### Patch Changes
