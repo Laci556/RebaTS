@@ -1,5 +1,13 @@
 # @rebats/prisma
 
+## 0.0.5
+
+### Patch Changes
+
+- d21b026: Bump versions
+- Updated dependencies [d21b026]
+  - @rebats/core@0.0.5
+
 ## 0.0.4
 
 ### Patch Changes
