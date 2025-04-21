@@ -1,5 +1,12 @@
 # @rebats/drizzle
 
+## 0.0.10
+
+### Patch Changes
+
+- 9a481b1: Update drizzle-orm to latest beta version
+  - @rebats/core@0.0.10
+
 ## 0.0.9
 
 ### Patch Changes
