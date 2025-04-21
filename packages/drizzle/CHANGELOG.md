@@ -1,5 +1,12 @@
 # @rebats/drizzle
 
+## 0.0.11
+
+### Patch Changes
+
+- e290c2e: Export createAdapter
+  - @rebats/core@0.0.11
+
 ## 0.0.10
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @rebats/prisma
 
+## 0.0.11
+
+### Patch Changes
+
+- @rebats/core@0.0.11
+
 ## 0.0.10
 
 ### Patch Changes
