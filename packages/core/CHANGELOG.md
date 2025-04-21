@@ -1,5 +1,11 @@
 # @rebats/core
 
+## 0.0.4
+
+### Patch Changes
+
+- d937ba9: Bump versions
+
 ## 0.0.3
 
 ### Patch Changes
