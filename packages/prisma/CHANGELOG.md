@@ -1,5 +1,13 @@
 # @rebats/prisma
 
+## 0.0.7
+
+### Patch Changes
+
+- 1daa131: Publish packages with provenance
+- Updated dependencies [1daa131]
+  - @rebats/core@0.0.7
+
 ## 0.0.6
 
 ### Patch Changes
