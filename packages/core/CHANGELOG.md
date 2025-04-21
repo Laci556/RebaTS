@@ -1,5 +1,11 @@
 # @rebats/core
 
+## 0.0.5
+
+### Patch Changes
+
+- d21b026: Bump versions
+
 ## 0.0.4
 
 ### Patch Changes
