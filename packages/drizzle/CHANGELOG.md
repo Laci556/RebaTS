@@ -1,5 +1,13 @@
 # @rebats/drizzle
 
+## 0.0.8
+
+### Patch Changes
+
+- 26c39a4: Bump versions
+- Updated dependencies [26c39a4]
+  - @rebats/core@0.0.8
+
 ## 0.0.7
 
 ### Patch Changes
