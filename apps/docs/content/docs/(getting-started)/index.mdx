@@ -1,0 +1,60 @@
+---
+title: Quick Start
+---
+
+## Introduction
+
+RebaTS is a relationship-based authorization
+[(ReBAC)](https://en.wikipedia.org/wiki/Relationship-based_access_control)
+library for TypeScript. It allows you to define your application's authorization
+rules based on your database schema, written in your favorite ORM. We currently
+support [Drizzle](https://orm.drizzle.team) and [Prisma](https://www.prisma.io).
+
+<Callout>
+  We'll go though some concepts, but if you want to learn more about
+  relationship-based authorization, check out [Google
+  Zanzibar](https://zanzibar.academy/) which RebaTS was heavily inspired by!
+</Callout>
+
+## Installation
+
+The library is split up into 3 layers:
+
+- You define your permissions using the `@rebats/core` library.
+
+  ```package-install
+  npm i @rebats/core
+  ```
+
+- It reads your database schema and executes the queries through your ORM of
+  choice using a **database adapter**. You should already have Drizzle or Prisma
+  installed.
+
+  ```package-install
+  npm i @rebats/drizzle # for Drizzle
+  npm i @rebats/prisma # for Prisma
+  ```
+
+  <Callout type="warn">
+    RebaTS depends on Drizzle's Relational Query Builder V2 API which is
+    currently in beta. You'll need to install the beta version of both
+    `drizzle-orm` and `drizzle-kit` and use the new `defineRelations` function
+    to use RebaTS. See the Drizzle guide for more info about the migration.
+  </Callout>
+
+- **Server adapters** take these rules to authorize incoming requests for your
+  endpoints. You can use the methods provided by the core library to perform
+  auth check but they will make integrating RebaTS with your library more
+  seamless.
+
+  ```package-install
+  npm i @rebats/express # for Express
+  npm i @rebats/next # for Next.js
+  npm i @rebats/nest # for NestJS
+  ```
+
+## Defining relationships and actions
+
+Securing your application starts with defining your relationships and actions.
+Relationships represents connections between your sujects (database tables) and
+actions are, well, the actions that these subjects can perform.

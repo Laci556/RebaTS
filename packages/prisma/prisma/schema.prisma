@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Team {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  users User[]
+}
+
+model User {
+  id     Int    @id @default(autoincrement())
+  email  String @unique
+  teamId Int
+  role   Role
+
+  team             Team       @relation(fields: [teamId], references: [id])
+  ownedDocuments   Document[] @relation("DocumentOwner")
+  editedDocuments  Document[] @relation("DocumentEditors")
+  deletedDocuments Document[] @relation("DocumentDeletedBy")
+}
+
+model Document {
+  id        Int     @id @default(autoincrement())
+  title     String
+  published Boolean
+  ownerId   Int
+
+  owner       User   @relation("DocumentOwner", fields: [ownerId], references: [id])
+  editors     User[] @relation("DocumentEditors")
+  deletedById Int?
+  deletedBy   User?  @relation("DocumentDeletedBy", fields: [deletedById], references: [id])
+}

@@ -1,0 +1,15 @@
+module.exports = ({ plugins = [], rules = {} } = {}) => ({
+  singleQuote: false,
+  trailingComma: "all",
+  printWidth: 80,
+  tabWidth: 2,
+  useTabs: false,
+  arrowParens: "always",
+  bracketSpacing: true,
+  jsxSingleQuote: false,
+  semi: true,
+  quoteProps: "as-needed",
+  proseWrap: "always",
+  ...rules,
+  plugins: ["prettier-plugin-organize-imports", ...plugins],
+});

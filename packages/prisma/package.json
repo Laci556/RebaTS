@@ -1,0 +1,19 @@
+{
+  "name": "@rebats/prisma",
+  "type": "module",
+  "module": "index.ts",
+  "scripts": {
+    "build": "tsup"
+  },
+  "devDependencies": {
+    "@rebats/prettier": "workspace:*",
+    "@types/bun": "latest",
+    "prisma": "^6.6.0",
+    "tsup": "^8.4.0"
+  },
+  "peerDependencies": {
+    "@rebats/core": "workspace:*",
+    "@prisma/client": "^6.6.0",
+    "typescript": "^5.0.0"
+  }
+}

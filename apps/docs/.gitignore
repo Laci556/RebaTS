@@ -1,0 +1,16 @@
+# generated content
+.contentlayer
+.content-collections
+.source
+
+# test & build
+/coverage
+/.next/
+/out/
+/build
+*.tsbuildinfo
+
+# others
+.env*.local
+.vercel
+next-env.d.ts

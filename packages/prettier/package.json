@@ -1,0 +1,11 @@
+{
+  "name": "@rebats/prettier",
+  "files": [
+    "config.js"
+  ],
+  "devDependencies": {
+    "prettier": "^3.5.2",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "prettier-plugin-tailwindcss": "^0.6.11"
+  }
+}

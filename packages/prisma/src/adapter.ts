@@ -1,0 +1,240 @@
+import {
+  AndCheck,
+  NotCheck,
+  OrCheck,
+  PermissionCheck,
+  RelationCheck,
+  RelationRefPlaceholder,
+  type ActionSelect,
+  type AuthorizeResult,
+  type AuthzTypeError,
+  type DatabaseAdapter,
+  type GetTableNames,
+  type SubjectSelect,
+} from "@rebats/core";
+import type { InferSchemaFromClient } from "./types";
+
+export type PrismaAdapterOptions = {
+  /**
+   * Whether to run the queries in a transaction.
+   *
+   * @default true
+   */
+  useTransaction?: boolean;
+};
+
+function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+type RuntimeRelationFields = {
+  [modelName: string]: {
+    [fieldName: string]: {
+      type: "many" | "one";
+      table: string;
+    };
+  };
+};
+
+type PrismaRuntimeDataModel = {
+  models: {
+    [modelName: string]: {
+      fields: {
+        name: string;
+        kind: string;
+        isList: boolean;
+        type: string;
+      }[];
+    };
+  };
+};
+
+export class PrismaAdapter<
+  TypeMap,
+  InferredSchema extends
+    InferSchemaFromClient<TypeMap> = InferSchemaFromClient<TypeMap>,
+> implements DatabaseAdapter<InferredSchema>
+{
+  declare public readonly _schema: InferredSchema;
+  private readonly options: PrismaAdapterOptions;
+  private readonly relationFields: RuntimeRelationFields;
+
+  constructor(
+    private readonly client: any,
+    options: PrismaAdapterOptions = {},
+  ) {
+    this.options = {
+      useTransaction: options.useTransaction ?? true,
+    };
+
+    this.relationFields = Object.entries(
+      (client._runtimeDataModel as PrismaRuntimeDataModel).models,
+    ).reduce((models, [modelName, model]) => {
+      models[modelName] = model.fields.reduce(
+        (fields, field) => {
+          if (field.kind !== "object") return fields;
+          fields[field.name] = {
+            type: field.isList ? "many" : "one",
+            table: field.type,
+          };
+          return fields;
+        },
+        {} as RuntimeRelationFields[string],
+      );
+      return models;
+    }, {} as RuntimeRelationFields);
+  }
+
+  private runInTransaction<T>(fn: (tx: any) => Promise<T>): Promise<T> {
+    if (this.options.useTransaction) {
+      return this.client.$transaction((tx: any) => fn(tx));
+    }
+
+    return fn(this.client);
+  }
+
+  public async can<
+    A extends GetTableNames<InferredSchema>,
+    B extends GetTableNames<InferredSchema>,
+  >(
+    who: SubjectSelect<InferredSchema, A>,
+    actionTarget: [A] extends [B]
+      ? ActionSelect<InferredSchema, B>
+      : AuthzTypeError<`Incompatible subjects: This action is not defined for subject "${A}"`>,
+  ): Promise<AuthorizeResult> {
+    const target = actionTarget as ActionSelect<InferredSchema, B>;
+
+    try {
+      return this.runInTransaction(async (tx) => {
+        const targetExists = await tx[target.action.parent.name].findFirst({
+          where: this.queryToPrisma(
+            target.query,
+            capitalize(target.action.parent.name),
+          ),
+        });
+
+        if (!targetExists) {
+          return { success: false, error: "not_found" };
+        }
+
+        const relationExists = await tx[target.action.parent.name].findFirst({
+          where: this.queryToPrisma(
+            {
+              $and: [
+                target.query,
+                this.permissionToQuery(who, target.action.authCheck),
+              ],
+            },
+            capitalize(target.action.parent.name),
+          ),
+        });
+
+        if (!relationExists) {
+          return { success: false, error: "unauthorized" };
+        }
+
+        return { success: true };
+      });
+    } catch {
+      return {
+        success: false,
+        error: "unknown",
+      };
+    }
+  }
+
+  private queryToPrisma(query: any, currentModel: string, isModelRoot = true) {
+    if (typeof query === "undefined") return undefined;
+    if (typeof query === "object" && query === null) return null;
+    if (
+      typeof query !== "object" ||
+      query instanceof Date ||
+      Array.isArray(query)
+    )
+      return query;
+
+    return Object.entries(query).reduce(
+      (acc, [key, value]) => {
+        switch (key) {
+          case "$or":
+            acc["OR"] = (value as any[]).map((v) =>
+              this.queryToPrisma(v, currentModel, isModelRoot),
+            );
+            break;
+          case "$and":
+            acc["AND"] = (value as any[]).map((v) =>
+              this.queryToPrisma(v, currentModel, isModelRoot),
+            );
+            break;
+          case "$not":
+            if (isModelRoot) {
+              acc["NOT"] = this.queryToPrisma(value, currentModel, isModelRoot);
+            } else {
+            }
+            break;
+          default:
+            const nextModel =
+              this.relationFields[currentModel][key]?.table ?? currentModel;
+
+            if (this.relationFields[currentModel][key]?.type === "many") {
+              acc[key] = { some: this.queryToPrisma(value, nextModel, true) };
+            } else {
+              acc[key] = this.queryToPrisma(
+                value,
+                nextModel,
+                nextModel !== currentModel,
+              );
+            }
+            break;
+        }
+
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+  }
+
+  private permissionToQuery(
+    who: SubjectSelect<any, any>,
+    permission: PermissionCheck<any>,
+  ): any {
+    if (permission instanceof RelationCheck) {
+      return permission.child.connectionFn(
+        who.query as unknown as RelationRefPlaceholder<any>,
+      );
+    }
+
+    if (permission instanceof OrCheck) {
+      return {
+        $or: permission.children.map((child) =>
+          this.permissionToQuery(who, child),
+        ),
+      };
+    }
+
+    if (permission instanceof AndCheck) {
+      return {
+        $and: permission.children.map((child) =>
+          this.permissionToQuery(who, child),
+        ),
+      };
+    }
+
+    if (permission instanceof NotCheck) {
+      return {
+        $not: this.permissionToQuery(who, permission.child),
+      };
+    }
+
+    throw new Error(); // TODO
+  }
+}
+
+/**
+ * Creates a Prisma adapter for the given client.
+ *
+ * @param client The Prisma client to create the adapter for.
+ */
+export function createAdapter<TypeMap>(client: any): PrismaAdapter<TypeMap> {
+  return new PrismaAdapter<TypeMap>(client);
+}
