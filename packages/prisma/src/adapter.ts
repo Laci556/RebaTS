@@ -7,9 +7,9 @@ import {
   RelationRefPlaceholder,
   type ActionSelect,
   type AuthorizeResult,
-  type AuthzTypeError,
   type DatabaseAdapter,
   type GetTableNames,
+  type RebaTSTypeError,
   type SubjectSelect,
 } from "@rebats/core";
 import type { InferSchemaFromClient } from "./types";
@@ -100,7 +100,7 @@ export class PrismaAdapter<
     who: SubjectSelect<InferredSchema, A>,
     actionTarget: [A] extends [B]
       ? ActionSelect<InferredSchema, B>
-      : AuthzTypeError<`Incompatible subjects: This action is not defined for subject "${A}"`>,
+      : RebaTSTypeError<`Incompatible subjects: This action is not defined for subject "${A}"`>,
   ): Promise<AuthorizeResult> {
     const target = actionTarget as ActionSelect<InferredSchema, B>;
 

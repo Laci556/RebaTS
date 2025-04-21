@@ -1,7 +1,7 @@
 import type { ActionSelect } from "./entities/action";
 import type { SubjectSelect } from "./entities/subject";
 import type { CommonSchema, GetTableNames } from "./schema";
-import type { AuthzTypeError } from "./utils";
+import type { RebaTSTypeError } from "./utils";
 
 export type AuthorizationError = "unauthorized" | "not_found" | "unknown";
 export type AuthorizeResult =
@@ -13,7 +13,7 @@ export interface Authorizable<Schema extends CommonSchema> {
     who: SubjectSelect<Schema, A>,
     actionTarget: [A] extends [B]
       ? ActionSelect<Schema, B>
-      : AuthzTypeError<`Incompatible subjects: This action is not defined for subject "${A}"`>,
+      : RebaTSTypeError<`Incompatible subjects: This action is not defined for subject "${A}"`>,
   ): Promise<AuthorizeResult>;
 }
 

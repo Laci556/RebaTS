@@ -6,6 +6,7 @@
     "dev": "turbo run dev"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "turbo": "^2.4.4",
     "typescript": "5.7.3"

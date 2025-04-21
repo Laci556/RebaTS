@@ -1,8 +1,8 @@
-const authzTypeErrorSymbol = Symbol("AuthzTypeError");
+const rebatsTypeError = Symbol("RebaTSTypeError");
 
-export type AuthzTypeError<T extends string> = Branded<
+export type RebaTSTypeError<T extends string> = Branded<
   T,
-  typeof authzTypeErrorSymbol
+  typeof rebatsTypeError
 >;
 
 export type NonEmptyTuple<T> = readonly [T, ...T[]];

@@ -1,5 +1,6 @@
 {
   "name": "@rebats/prettier",
+  "private": true,
   "files": [
     "config.js"
   ],

@@ -4,14 +4,14 @@ import {
   NotCheck,
   OrCheck,
   RelationCheck,
+  RelationRefPlaceholder,
   SubjectSelect,
   type AuthorizeResult,
-  type AuthzTypeError,
   type DatabaseAdapter,
   type GetTableNames,
   type PermissionCheck,
+  type RebaTSTypeError,
 } from "@rebats/core";
-import type { RelationRefPlaceholder } from "@rebats/core/src/query";
 import { sql, type AnyRelations } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import type { AnyDrizzleClient, InferSchemaFromRelations } from "./types";
@@ -36,7 +36,7 @@ export class DrizzleAdapter<
     who: SubjectSelect<InferredSchema, A>,
     actionTarget: [A] extends [B]
       ? ActionSelect<InferredSchema, B>
-      : AuthzTypeError<`Incompatible subjects: This action is not defined for subject "${A}"`>,
+      : RebaTSTypeError<`Incompatible subjects: This action is not defined for subject "${A}"`>,
   ): Promise<AuthorizeResult> {
     const target = actionTarget as ActionSelect<InferredSchema, B>;
     const tx = this.client as unknown as NodePgDatabase<
