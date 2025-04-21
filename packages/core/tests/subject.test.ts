@@ -68,14 +68,22 @@ describe("Subject", () => {
   });
 
   test("Should throw TypeError if action does not exist", () => {
-    const subject = s.subject("users").action("delete", {} as any); // TODO: add real checkFn
+    const sUser = s.subject("users");
+    const sDocument = s
+      .subject("documents")
+      .relation(
+        "owner",
+        () => sUser,
+        (t) => ({ owner: t }),
+      )
+      .action("delete", (t) => t.owner);
 
     expect(() => {
       // @ts-expect-error
-      subject.nonExistentAction;
+      sDocument.nonExistentAction;
     }).toThrow(
       new TypeError(
-        'Action "nonExistentAction" does not exist on subject "users"',
+        'Action "nonExistentAction" does not exist on subject "documents"',
       ),
     );
   });

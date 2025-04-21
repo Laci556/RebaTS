@@ -2,12 +2,11 @@
   "name": "rebats",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev"
+    "build-packages": "turbo run build --filter=!@rebats/docs",
+    "publish-packages": "turbo run build test --filter=!@rebats/docs && changeset version && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.2",
-    "prettier-plugin-tailwindcss": "^0.6.11",
     "turbo": "^2.4.4",
     "typescript": "5.7.3"
   },
