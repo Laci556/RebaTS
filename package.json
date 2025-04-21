@@ -1,6 +1,10 @@
 {
   "name": "rebats",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Laci556/RebaTS.git"
+  },
   "scripts": {
     "build-packages": "turbo run build --filter=!@rebats/docs",
     "publish-changed": "bun run publish-packages.ts && changeset tag"

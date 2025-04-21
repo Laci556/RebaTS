@@ -37,7 +37,7 @@
     },
     "packages/core": {
       "name": "@rebats/core",
-      "version": "0.0.5",
+      "version": "0.0.7",
       "devDependencies": {
         "@ark/attest": "^0.45.11",
         "@rebats/prettier": "workspace:*",
@@ -51,7 +51,7 @@
     },
     "packages/drizzle": {
       "name": "@rebats/drizzle",
-      "version": "0.0.5",
+      "version": "0.0.7",
       "devDependencies": {
         "@electric-sql/pglite": "^0.2.17",
         "@libsql/client": "^0.15.2",
@@ -81,7 +81,7 @@
     },
     "packages/prisma": {
       "name": "@rebats/prisma",
-      "version": "0.0.5",
+      "version": "0.0.7",
       "devDependencies": {
         "@rebats/core": "workspace:*",
         "@rebats/prettier": "workspace:*",
