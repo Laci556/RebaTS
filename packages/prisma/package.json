@@ -3,6 +3,10 @@
   "version": "0.0.3",
   "description": "Prisma ORM adapter for RebaTS",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Laci556/RebaTS.git",
@@ -24,7 +28,8 @@
   ],
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch"
+    "dev": "tsup --watch",
+    "publish-package": "bun publish --provenance"
   },
   "devDependencies": {
     "@rebats/prettier": "workspace:*",

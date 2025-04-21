@@ -3,6 +3,10 @@
   "version": "0.0.3",
   "description": "Core library for RebaTS, a relationship-based authorization framework.",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Laci556/RebaTS.git",
@@ -26,7 +30,8 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "tsc -p tsconfig.test.json && bun test",
-    "benchmark": "tsx benches/subject.bench.ts"
+    "benchmark": "tsx benches/subject.bench.ts",
+    "publish-package": "bun publish --provenance"
   },
   "devDependencies": {
     "@ark/attest": "^0.45.11",

@@ -28,7 +28,10 @@ jobs:
       - name: Install Dependencies
         run: bun install
 
-      - name: Create Release Pull Request
+      - name: Create Release Pull Request or Publish to npm
         uses: changesets/action@v1
+        with:
+          - release: bun publish-changed
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
