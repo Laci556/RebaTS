@@ -4,7 +4,12 @@ export const queryRef: unique symbol = Symbol("queryRef");
 export const queryOperator: unique symbol = Symbol("queryOperator");
 
 interface InternalFieldFilters<T> {
-  // TODO: add more operators
+  $lt?: T | undefined;
+  $lte?: T | undefined;
+  $gt?: T | undefined;
+  $gte?: T | undefined;
+  $in?: T[] | undefined;
+  $nin?: T[] | undefined;
 }
 
 type FieldFilter<T> = T | InternalFieldFilters<T>;

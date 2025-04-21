@@ -143,7 +143,7 @@ export class PrismaAdapter<
     }
   }
 
-  private queryToPrisma(query: any, currentModel: string, isModelRoot = true) {
+  private queryToPrisma(query: any, currentModel: string) {
     if (typeof query === "undefined") return undefined;
     if (typeof query === "object" && query === null) return null;
     if (
@@ -156,34 +156,49 @@ export class PrismaAdapter<
     return Object.entries(query).reduce(
       (acc, [key, value]) => {
         switch (key) {
+          // Logical operators
           case "$or":
             acc["OR"] = (value as any[]).map((v) =>
-              this.queryToPrisma(v, currentModel, isModelRoot),
+              this.queryToPrisma(v, currentModel),
             );
             break;
           case "$and":
             acc["AND"] = (value as any[]).map((v) =>
-              this.queryToPrisma(v, currentModel, isModelRoot),
+              this.queryToPrisma(v, currentModel),
             );
             break;
           case "$not":
-            if (isModelRoot) {
-              acc["NOT"] = this.queryToPrisma(value, currentModel, isModelRoot);
-            } else {
-            }
+            acc["NOT"] = this.queryToPrisma(value, currentModel);
             break;
+
+          // Field comparison operators
+          case "$in":
+            acc["in"] = value;
+            break;
+          case "$nin":
+            acc["notIn"] = value;
+            break;
+          case "$lt":
+            acc["lt"] = value;
+            break;
+          case "$lte":
+            acc["lte"] = value;
+            break;
+          case "$gt":
+            acc["gt"] = value;
+            break;
+          case "$gte":
+            acc["gte"] = value;
+            break;
+
           default:
             const nextModel =
               this.relationFields[currentModel][key]?.table ?? currentModel;
 
             if (this.relationFields[currentModel][key]?.type === "many") {
-              acc[key] = { some: this.queryToPrisma(value, nextModel, true) };
+              acc[key] = { some: this.queryToPrisma(value, nextModel) };
             } else {
-              acc[key] = this.queryToPrisma(
-                value,
-                nextModel,
-                nextModel !== currentModel,
-              );
+              acc[key] = this.queryToPrisma(value, nextModel);
             }
             break;
         }
@@ -226,7 +241,7 @@ export class PrismaAdapter<
       };
     }
 
-    throw new Error(); // TODO
+    throw new Error(`Invalid permission check: ${permission}`);
   }
 }
 

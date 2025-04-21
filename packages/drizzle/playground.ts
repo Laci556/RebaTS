@@ -131,7 +131,7 @@ const sDocument = s
 const authzClient = initClient(adapter);
 
 client.query.users.findFirst({
-  where: { email: {} },
+  where: { id: {} },
 });
 
 console.log(

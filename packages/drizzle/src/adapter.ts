@@ -126,6 +126,7 @@ export class DrizzleAdapter<
     return Object.entries(query).reduce(
       (acc, [key, value]) => {
         switch (key) {
+          // Logical operators
           case "$or":
             acc["OR"] = (value as any[]).map(this.queryToDrizzle);
             break;
@@ -135,6 +136,27 @@ export class DrizzleAdapter<
           case "$not":
             acc["NOT"] = this.queryToDrizzle(value);
             break;
+
+          // Field comparison operators
+          case "$in":
+            acc["in"] = value;
+            break;
+          case "$nin":
+            acc["notIn"] = value;
+            break;
+          case "$lt":
+            acc["lt"] = value;
+            break;
+          case "$lte":
+            acc["lte"] = value;
+            break;
+          case "$gt":
+            acc["gt"] = value;
+            break;
+          case "$gte":
+            acc["gte"] = value;
+            break;
+
           default:
             acc[key] = this.queryToDrizzle(value);
             break;
@@ -178,7 +200,7 @@ export class DrizzleAdapter<
       };
     }
 
-    throw new Error(); // TODO
+    throw new Error(`Invalid permission check: ${permission}`);
   }
 }
 
