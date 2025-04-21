@@ -1,6 +1,6 @@
 {
   "name": "@rebats/prisma",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Prisma ORM adapter for RebaTS",
   "license": "MIT",
   "publishConfig": {
