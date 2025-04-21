@@ -1,5 +1,17 @@
 # @rebats/drizzle
 
+## 0.0.12
+
+### Patch Changes
+
+- 9719091: Added new field comparison operators
+
+  `$in`, `$nin`, `$lt`, `$lte`, `$gt` and `$gte` are now supported for all field
+  types.
+
+- Updated dependencies [9719091]
+  - @rebats/core@0.0.12
+
 ## 0.0.11
 
 ### Patch Changes
