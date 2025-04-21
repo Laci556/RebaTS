@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build-packages": "turbo run build --filter=!@rebats/docs",
-    "publish-changed": "bun run publish-packages.ts && changeset publish"
+    "publish-changed": "bun run publish-packages.ts && changeset tag"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.2",
