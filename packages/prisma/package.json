@@ -32,6 +32,7 @@
     "publish-package": "bun publish --provenance"
   },
   "devDependencies": {
+    "@rebats/core": "workspace:*",
     "@rebats/prettier": "workspace:*",
     "@types/bun": "latest",
     "prisma": "^6.6.0",

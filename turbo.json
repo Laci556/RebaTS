@@ -8,7 +8,7 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "publish-package": {
-      "dependsOn": ["^build", "build"]
+      "dependsOn": ["build"]
     },
     "lint": {
       "dependsOn": ["^lint"]

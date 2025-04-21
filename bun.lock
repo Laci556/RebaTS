@@ -55,6 +55,7 @@
       "devDependencies": {
         "@electric-sql/pglite": "^0.2.17",
         "@libsql/client": "^0.15.2",
+        "@rebats/core": "workspace:*",
         "@rebats/prettier": "workspace:*",
         "@types/bun": "latest",
         "@types/pg": "^8.11.11",
@@ -82,6 +83,7 @@
       "name": "@rebats/prisma",
       "version": "0.0.5",
       "devDependencies": {
+        "@rebats/core": "workspace:*",
         "@rebats/prettier": "workspace:*",
         "@types/bun": "latest",
         "prisma": "^6.6.0",
