@@ -130,7 +130,7 @@ export class PrismaAdapter<
         });
 
         if (!relationExists) {
-          return { success: false, error: "unauthorized" };
+          return { success: false, error: "forbidden" };
         }
 
         return { success: true };
@@ -193,9 +193,9 @@ export class PrismaAdapter<
 
           default:
             const nextModel =
-              this.relationFields[currentModel][key]?.table ?? currentModel;
+              this.relationFields[currentModel]?.[key]?.table ?? currentModel;
 
-            if (this.relationFields[currentModel][key]?.type === "many") {
+            if (this.relationFields[currentModel]?.[key]?.type === "many") {
               acc[key] = { some: this.queryToPrisma(value, nextModel) };
             } else {
               acc[key] = this.queryToPrisma(value, nextModel);

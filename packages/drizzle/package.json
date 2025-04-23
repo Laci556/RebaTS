@@ -30,7 +30,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "tsc -p tsconfig.test.json && bun test",
-    "publish-package": "bun publish --provenance"
+    "publish-package": "bun publish --provenance --access public"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.2.17",

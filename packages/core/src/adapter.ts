@@ -3,7 +3,7 @@ import type { SubjectSelect } from "./entities/subject";
 import type { CommonSchema, GetTableNames } from "./schema";
 import type { RebaTSTypeError } from "./utils";
 
-export type AuthorizationError = "unauthorized" | "not_found" | "unknown";
+export type AuthorizationError = "forbidden" | "not_found" | "unknown";
 export type AuthorizeResult =
   | { success: true; error?: never }
   | { success: false; error: AuthorizationError };

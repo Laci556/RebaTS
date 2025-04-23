@@ -29,7 +29,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "publish-package": "bun publish --provenance"
+    "publish-package": "bun publish --provenance --access public"
   },
   "devDependencies": {
     "@rebats/core": "workspace:*",

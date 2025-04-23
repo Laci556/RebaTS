@@ -50,7 +50,7 @@ export class DrizzleAdapter<
       const targetSq = tx
         .$with("target_sq", { exists: sql`1`.as("exists") })
         .as(
-          tx.query[target.action.parent.name].findFirst({
+          tx.query[target.action.parent.name]!.findFirst({
             where: targetQuery,
             columns: {},
             extras: { exists: sql`1` },
@@ -61,7 +61,7 @@ export class DrizzleAdapter<
         .select({ exists: targetSq.exists })
         .from(targetSq);
 
-      const relationSq = tx.query[target.action.parent.name].findFirst({
+      const relationSq = tx.query[target.action.parent.name]!.findFirst({
         where: {
           AND: [
             targetQuery,
@@ -74,7 +74,7 @@ export class DrizzleAdapter<
         extras: { exists: sql`1` },
       });
 
-      const [{ targetExists, relationExists }] = await tx
+      const res = await tx
         .with(targetSq)
         .select({
           targetExists: sql<boolean>`exists ${targetSelect}`.as(
@@ -86,6 +86,15 @@ export class DrizzleAdapter<
             ),
         })
         .from(sql`(select 1) as dummy`);
+
+      if (!res[0]) {
+        return {
+          success: false,
+          error: "unknown",
+        };
+      }
+
+      const [{ relationExists, targetExists }] = res;
 
       if (!targetExists) {
         // Entity not found
@@ -99,7 +108,7 @@ export class DrizzleAdapter<
         // User not authorized
         return {
           success: false,
-          error: "unauthorized",
+          error: "forbidden",
         };
       }
 
