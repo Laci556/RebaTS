@@ -1,9 +1,9 @@
 import type { RelationRefPlaceholder, SchemaQuery } from "../query";
 import type { CommonSchema } from "../schema";
-import type { Branded } from "../utils";
 import { entityType } from "./entity-type";
 import type { AnySubject } from "./subject";
 
+/*
 const parentRelationPlaceholderSymbol: unique symbol = Symbol(
   "parentRelationPlaceholder",
 );
@@ -16,13 +16,17 @@ type ParentRelationPlaceholder = Branded<
 type ParentRelationsProxy<S extends AnySubject> = {
   [Key in keyof S["_"]["relations"]]: ParentRelationPlaceholder;
 };
+*/
 
 export type RelationConnectionFn<
   Schema extends CommonSchema,
   ParentSubject extends AnySubject<Schema>,
   TargetSubject extends AnySubject<Schema>,
 > = (
-  target: RelationRefPlaceholder<TargetSubject["_"]["name"]>,
+  target: RelationRefPlaceholder<
+    TargetSubject["_"]["name"],
+    TargetSubject["_"]["attributes"]
+  >,
   // parent: ParentRelationsProxy<ParentSubject>,
   // TODO: union, intersection
 ) => SchemaQuery<

@@ -1,6 +1,7 @@
+import { RelationRef, type SelectQuery } from "../query";
 import { entityType } from "./entity-type";
 import type { AnyRelation } from "./relation";
-import type { AnySubject } from "./subject";
+import type { AnySubject, SubjectSelect } from "./subject";
 
 const permissionCheckType = Symbol("permissionCheckType");
 
@@ -15,6 +16,8 @@ export abstract class PermissionCheck<Target extends string> {
   constructor(type: string) {
     this[permissionCheckType] = type;
   }
+
+  public abstract toQuery(subject: SubjectSelect<any, any>): any;
 }
 
 export class RelationCheck<
@@ -22,32 +25,56 @@ export class RelationCheck<
 > extends PermissionCheck<Target> {
   declare public readonly [permissionCheckType]: "relation";
 
-  constructor(public readonly child: AnyRelation) {
+  constructor(private readonly child: AnyRelation) {
     super("relation");
+  }
+
+  public toQuery(who: SubjectSelect<any, any>): SelectQuery<any, any> {
+    return this.child.connectionFn(
+      new RelationRef<any, any>(who.outputSubject, who.query),
+    );
   }
 }
 
 export class OrCheck<Target extends string> extends PermissionCheck<Target> {
   declare public readonly [permissionCheckType]: "or";
 
-  constructor(public readonly children: PermissionCheck<Target>[]) {
+  constructor(private readonly children: PermissionCheck<Target>[]) {
     super("or");
+  }
+
+  public toQuery(who: SubjectSelect<any, any>): SelectQuery<any, any> {
+    return {
+      $or: this.children.map((child) => child.toQuery(who)),
+    } as any;
   }
 }
 
 export class AndCheck<Target extends string> extends PermissionCheck<Target> {
   declare public readonly [permissionCheckType]: "and";
 
-  constructor(public readonly children: PermissionCheck<Target>[]) {
+  constructor(private readonly children: PermissionCheck<Target>[]) {
     super("and");
+  }
+
+  public toQuery(who: SubjectSelect<any, any>): SelectQuery<any, any> {
+    return {
+      $and: this.children.map((child) => child.toQuery(who)),
+    } as any;
   }
 }
 
 export class NotCheck<Target extends string> extends PermissionCheck<Target> {
   declare public readonly [permissionCheckType]: "not";
 
-  constructor(public readonly child: PermissionCheck<Target>) {
+  constructor(private readonly child: PermissionCheck<Target>) {
     super("not");
+  }
+
+  public toQuery(who: SubjectSelect<any, any>): SelectQuery<any, any> {
+    return {
+      $not: this.child.toQuery(who),
+    } as any;
   }
 }
 

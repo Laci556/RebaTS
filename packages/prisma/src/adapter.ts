@@ -1,10 +1,5 @@
 import {
-  AndCheck,
-  NotCheck,
-  OrCheck,
-  PermissionCheck,
-  RelationCheck,
-  RelationRefPlaceholder,
+  RelationRef,
   type ActionSelect,
   type AuthorizeResult,
   type DatabaseAdapter,
@@ -120,10 +115,7 @@ export class PrismaAdapter<
         const relationExists = await tx[target.action.parent.name].findFirst({
           where: this.queryToPrisma(
             {
-              $and: [
-                target.query,
-                this.permissionToQuery(who, target.action.authCheck),
-              ],
+              $and: [target.query, target.action.authCheck.toQuery(who)],
             },
             capitalize(target.action.parent.name),
           ),
@@ -143,7 +135,7 @@ export class PrismaAdapter<
     }
   }
 
-  private queryToPrisma(query: any, currentModel: string) {
+  private queryToPrisma(query: any, currentModel: string): any {
     if (typeof query === "undefined") return undefined;
     if (typeof query === "object" && query === null) return null;
     if (
@@ -152,6 +144,10 @@ export class PrismaAdapter<
       Array.isArray(query)
     )
       return query;
+
+    if (query instanceof RelationRef) {
+      return this.queryToPrisma(query.toQuery(), currentModel);
+    }
 
     return Object.entries(query).reduce(
       (acc, [key, value]) => {
@@ -207,41 +203,6 @@ export class PrismaAdapter<
       },
       {} as Record<string, any>,
     );
-  }
-
-  private permissionToQuery(
-    who: SubjectSelect<any, any>,
-    permission: PermissionCheck<any>,
-  ): any {
-    if (permission instanceof RelationCheck) {
-      return permission.child.connectionFn(
-        who.query as unknown as RelationRefPlaceholder<any>,
-      );
-    }
-
-    if (permission instanceof OrCheck) {
-      return {
-        $or: permission.children.map((child) =>
-          this.permissionToQuery(who, child),
-        ),
-      };
-    }
-
-    if (permission instanceof AndCheck) {
-      return {
-        $and: permission.children.map((child) =>
-          this.permissionToQuery(who, child),
-        ),
-      };
-    }
-
-    if (permission instanceof NotCheck) {
-      return {
-        $not: this.permissionToQuery(who, permission.child),
-      };
-    }
-
-    throw new Error(`Invalid permission check: ${permission}`);
   }
 }
 

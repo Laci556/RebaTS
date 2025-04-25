@@ -9,6 +9,7 @@ const adapter = {} as unknown as DatabaseAdapter<{
       id: number;
       email: string;
       teamId: number;
+      role: string;
     };
     documents: {
       id: number;

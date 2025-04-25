@@ -40,7 +40,6 @@
   },
   "peerDependencies": {
     "@rebats/core": "workspace:*",
-    "@prisma/client": "^6.6.0",
     "typescript": "^5.0.0"
   }
 }

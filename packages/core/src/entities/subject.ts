@@ -15,13 +15,15 @@ export type AnySubject<
   Name extends GetTableNames<Schema> = any,
   Relations extends Record<string, AnyRelation> = any,
   Actions extends Record<string, AnyAction> = any,
-> = Subject<Schema, Name, Relations, Actions>;
+  Attributes extends Record<string, any> = any,
+> = Subject<Schema, Name, Relations, Actions, Attributes>;
 
 export class Subject<
   Schema extends CommonSchema,
   Name extends GetTableNames<Schema>,
   Relations extends Record<string, AnyRelation> = Record<never, never>,
   Actions extends Record<string, AnyAction> = Record<never, never>,
+  Attributes extends Record<string, any> = Record<never, never>,
 > {
   /**
    * Contains type information about the entity.
@@ -33,6 +35,7 @@ export class Subject<
     name: Name;
     relations: Relations;
     actions: Actions;
+    attributes: Attributes;
   };
 
   public readonly [entityType] = "subject";
@@ -40,6 +43,7 @@ export class Subject<
 
   private relationsMap: Map<string, AnyRelation> = new Map();
   private actionsMap: Map<string, AnyAction> = new Map();
+  private attributesMap: Map<string, (...args: any[]) => any> = new Map();
 
   constructor(name: Name) {
     this.name = name;
@@ -75,16 +79,17 @@ export class Subject<
     Schema,
     Name,
     {
-      [Key in keyof Relations | RelationName]: Key extends keyof Relations
-        ? Relations[Key]
-        : Relation<
+      [Key in keyof Relations | RelationName]: Key extends RelationName
+        ? Relation<
             Schema,
             RelationName,
             Subject<Schema, Name, Relations, Actions>,
             TargetSubject
-          >;
+          >
+        : Relations[Key];
     },
-    Actions
+    Actions,
+    Attributes
   > {
     this.relationsMap.set(
       relationName,
@@ -104,20 +109,57 @@ export class Subject<
     Name,
     Relations,
     {
-      [Key in keyof Actions | ActionName]: Key extends keyof Actions
-        ? Actions[Key]
-        : Action<
+      [Key in keyof Actions | ActionName]: Key extends ActionName
+        ? Action<
             Schema,
             ActionName,
             Subject<Schema, Name, Relations, Actions>,
             ResultName
-          >;
-    }
+          >
+        : Actions[Key];
+    },
+    Attributes
   > {
     this.actionsMap.set(
       actionName,
       new Action(actionName, this as any, checkFn),
     );
+    return this as any;
+  }
+
+  public attribute<AttributeName extends string>(
+    attributeName: AttributeName,
+    checkFn: () => SelectQuery<Schema, Name>,
+  ): SubjectWithActions<
+    Schema,
+    Name,
+    Relations,
+    Actions,
+    {
+      [Key in keyof Attributes | AttributeName]: Key extends AttributeName
+        ? never
+        : Attributes[Key];
+    }
+  >;
+  public attribute<AttributeName extends string, Arg extends any>(
+    attributeName: AttributeName,
+    checkFn: (arg: Arg) => SelectQuery<Schema, Name>,
+  ): SubjectWithActions<
+    Schema,
+    Name,
+    Relations,
+    Actions,
+    {
+      [Key in keyof Attributes | AttributeName]: Key extends AttributeName
+        ? Arg
+        : Attributes[Key];
+    }
+  >;
+  public attribute<AttributeName extends string, Arg extends any>(
+    attributeName: AttributeName,
+    checkFn: (arg: Arg) => SelectQuery<Schema, Name>,
+  ) {
+    this.attributesMap.set(attributeName, checkFn);
     return this as any;
   }
 
@@ -151,7 +193,8 @@ type SubjectWithActions<
   Name extends GetTableNames<Schema>,
   Relations extends Record<string, AnyRelation> = Record<never, never>,
   Actions extends Record<string, AnyAction> = Record<never, never>,
-> = Subject<Schema, Name, Relations, Actions> & {
+  Attributes extends Record<string, any> = Record<never, never>,
+> = Subject<Schema, Name, Relations, Actions, Attributes> & {
   [Key in keyof Actions]: Actions[Key];
 };
 
@@ -174,6 +217,8 @@ class SubjectBuilder<Schema extends CommonSchema> {
   ): () => AnySubject<CommonSchema, Name> {
     return args[args.length - 1] as any;
   }
+
+  // TODO: root
 }
 
 export function initSubjectBuilder<Schema extends CommonSchema>(

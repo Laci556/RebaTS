@@ -30,7 +30,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "tsc -p tsconfig.test.json && bun test",
-    "benchmark": "tsx benches/subject.bench.ts",
+    "benchmark": "tsx ./benches/subject.bench.ts",
     "publish-package": "bun publish --provenance --access public"
   },
   "devDependencies": {
@@ -38,7 +38,8 @@
     "@rebats/prettier": "workspace:*",
     "@types/bun": "latest",
     "expect-type": "^1.2.1",
-    "tsup": "^8.4.0"
+    "tsup": "^8.4.0",
+    "tsx": "^4.19.3"
   },
   "peerDependencies": {
     "typescript": "^5.7.3"

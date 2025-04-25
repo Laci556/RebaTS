@@ -1,3 +1,4 @@
+import type { AnySubject } from "./entities/subject";
 import type { CommonSchema, GetTableNames, SchemaRelation } from "./schema";
 
 export const queryRef: unique symbol = Symbol("queryRef");
@@ -14,8 +15,53 @@ interface InternalFieldFilters<T> {
 
 type FieldFilter<T> = T | InternalFieldFilters<T>;
 
-export class RelationRefPlaceholder<Table extends string> {
-  constructor(public readonly table: Table) {}
+export class RelationRefPlaceholder<
+  Table extends string,
+  Attributes extends Record<string, any>,
+> {
+  protected readonly appliedAttributes: Array<[string, any]> = [];
+
+  public with<AttributeName extends keyof Attributes>(
+    attributeName: AttributeName,
+    ...args: Attributes[AttributeName] extends never
+      ? []
+      : [Attributes[AttributeName]]
+  ): RelationRefPlaceholder<Table, Attributes> {
+    this.appliedAttributes.push([attributeName as string, args[0]]);
+    return this;
+  }
+}
+
+export class RelationRef<
+  Table extends string,
+  Attributes extends Record<string, any>,
+> extends RelationRefPlaceholder<Table, Attributes> {
+  private readonly subject: AnySubject;
+  private readonly query: any;
+
+  constructor(subject: AnySubject, query: any) {
+    super();
+    this.subject = subject;
+    this.query = query;
+  }
+
+  public toQuery(): any {
+    if (!this.appliedAttributes.length) return this.query;
+    return {
+      $and: [
+        this.query,
+        ...this.appliedAttributes.map(([attributeName, arg]) => {
+          const attributeFn = this.subject["attributesMap"].get(attributeName);
+          if (!attributeFn) {
+            throw new Error(
+              `Attribute "${attributeName}" not found on subject "${this.subject.name}"`,
+            );
+          }
+          return attributeFn(arg);
+        }),
+      ],
+    };
+  }
 }
 
 export type SchemaQuery<
@@ -39,7 +85,7 @@ export type SchemaQuery<
             >
           ?
               | (RelatedTable extends TargetTableName
-                  ? RelationRefPlaceholder<TargetTableName>
+                  ? RelationRefPlaceholder<TargetTableName, any>
                   : never)
               | SchemaQuery<Schema, RelatedTable, TargetTableName>
           : never;

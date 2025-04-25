@@ -1,15 +1,10 @@
 import {
   ActionSelect,
-  AndCheck,
-  NotCheck,
-  OrCheck,
-  RelationCheck,
-  RelationRefPlaceholder,
+  RelationRef,
   SubjectSelect,
   type AuthorizeResult,
   type DatabaseAdapter,
   type GetTableNames,
-  type PermissionCheck,
   type RebaTSTypeError,
 } from "@rebats/core";
 import { sql, type AnyRelations } from "drizzle-orm";
@@ -65,9 +60,7 @@ export class DrizzleAdapter<
         where: {
           AND: [
             targetQuery,
-            this.queryToDrizzle(
-              this.permissionToQuery(who, target.action.authCheck),
-            ),
+            this.queryToDrizzle(target.action.authCheck.toQuery(who)),
           ] as any,
         },
         columns: {},
@@ -132,15 +125,19 @@ export class DrizzleAdapter<
     )
       return query;
 
+    if (query instanceof RelationRef) {
+      return this.queryToDrizzle(query.toQuery());
+    }
+
     return Object.entries(query).reduce(
       (acc, [key, value]) => {
         switch (key) {
           // Logical operators
           case "$or":
-            acc["OR"] = (value as any[]).map(this.queryToDrizzle);
+            acc["OR"] = (value as any[]).map(this.queryToDrizzle.bind(this));
             break;
           case "$and":
-            acc["AND"] = (value as any[]).map(this.queryToDrizzle);
+            acc["AND"] = (value as any[]).map(this.queryToDrizzle.bind(this));
             break;
           case "$not":
             acc["NOT"] = this.queryToDrizzle(value);
@@ -175,41 +172,6 @@ export class DrizzleAdapter<
       },
       {} as Record<string, any>,
     );
-  }
-
-  private permissionToQuery(
-    who: SubjectSelect<any, any>,
-    permission: PermissionCheck<any>,
-  ): any {
-    if (permission instanceof RelationCheck) {
-      return permission.child.connectionFn(
-        who.query as unknown as RelationRefPlaceholder<any>,
-      );
-    }
-
-    if (permission instanceof OrCheck) {
-      return {
-        $or: permission.children.map((child) =>
-          this.permissionToQuery(who, child),
-        ),
-      };
-    }
-
-    if (permission instanceof AndCheck) {
-      return {
-        $and: permission.children.map((child) =>
-          this.permissionToQuery(who, child),
-        ),
-      };
-    }
-
-    if (permission instanceof NotCheck) {
-      return {
-        $not: this.permissionToQuery(who, permission.child),
-      };
-    }
-
-    throw new Error(`Invalid permission check: ${permission}`);
   }
 }
 

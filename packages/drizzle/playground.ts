@@ -10,6 +10,7 @@ const users = pgTable("users", ({ serial, text, integer }) => ({
   teamId: integer("team_id")
     .notNull()
     .references(() => teams.id),
+  role: text("role").notNull(),
 }));
 
 const documents = pgTable("documents", ({ serial, text, integer }) => ({
@@ -94,25 +95,30 @@ const relations = defineRelations(schema, (r) => ({
 
 const client = drizzle("postgresql://postgres:root@localhost:5432/authz", {
   relations,
-  // logger: true,
 });
 
 const adapter = createAdapter(client);
 
 const s = initSubjectBuilder(adapter);
 
-const sUser = s.subject("users").relation(
-  "team",
-  () => sTeam,
-  (team) => ({ team: team }),
-);
+const sUser = s
+  .subject("users")
+  .relation(
+    "team",
+    () => sTeam,
+    (team) => ({ team: team }),
+  )
+  .attribute("role", (role: string) => ({ role }))
+  .attribute("idLowerThan", (n: number) => ({ id: { $lt: n } }));
 const sTeam = s.subject("teams");
 const sDocument = s
   .subject("documents")
   .relation(
     "owner",
     () => sUser,
-    (user) => ({ owner: user }),
+    (user) => ({
+      owner: user.with("role", "admin").with("idLowerThan", 1),
+    }),
   )
   .relation(
     "editor",
@@ -130,13 +136,13 @@ const sDocument = s
 
 const authzClient = initClient(adapter);
 
-client.query.users.findFirst({
-  where: { id: {} },
-});
+// client.query.users.findFirst({
+//   where: { id: {} },
+// });
 
 console.log(
   await authzClient.can(
-    sUser.select({ id: 1, deletedDocuments: {} }),
+    sUser.select({ id: 1 }),
     sDocument.edit.select({ id: 1 }),
   ),
 );

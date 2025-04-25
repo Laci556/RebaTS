@@ -12,6 +12,7 @@ const adapter = {
       id: number;
       email: string;
       teamId: number;
+      role: string;
     };
     documents: {
       id: number;
@@ -39,28 +40,29 @@ const adapter = {
 
 const s = initSubjectBuilder(adapter);
 
-const sUser = s.subject("users").relation(
-  "ownedDocuments",
-  s.ref("documents", () => sDocument),
-  (target) => ({ ownedDocuments: target }),
-);
+const sUser = s
+  .subject("users")
+  .relation(
+    "ownedDocuments",
+    s.ref("documents", () => sDocument),
+    (target) => ({ ownedDocuments: target }),
+  )
+  .attribute("role", (roles: string[]) => ({
+    role: { $in: roles },
+  }));
+
 const sDocument = s
   .subject("documents")
   .relation(
     "owner",
     () => sUser,
-    (target) => ({ owner: target }),
+    (target) => ({ owner: target.with("role", ["admin"]) }),
   )
   .relation(
     "editor",
     () => sUser,
     (target) => ({ editors: target }),
   )
-  // .relation(
-  //   "parent",
-  //   s.ref("documents", () => sDocument),
-  //   (target) => ({ parent: { id: target.id } }),
-  // )
   .action("delete", (t, { or, not, and }) =>
     or(and(t.editor, not(t.owner)), and(not(t.editor), t.owner)),
   );
