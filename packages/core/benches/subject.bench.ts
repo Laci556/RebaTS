@@ -15,9 +15,9 @@ const adapter = {} as unknown as DatabaseAdapter<{
       id: number;
       ownerId: number;
       title: string;
-      deletedById: number;
+      deletedById: number | null;
       teamId: number;
-      parentId: number;
+      parentId: number | null;
     };
     teams: {
       id: number;
@@ -46,12 +46,12 @@ const s = initSubjectBuilder(adapter);
 
 bench("Initialize single subject", () => {
   const sUser = s.subject("users");
-}).types([156, "instantiations"]);
+}).types([154, "instantiations"]);
 
 bench("Initialize 2 subjects", () => {
   const sUser = s.subject("users");
   const sDocument = s.subject("documents");
-}).types([166, "instantiations"]);
+}).types([164, "instantiations"]);
 
 bench("Circular reference with ref", () => {
   const sUser = s.subject("users");
@@ -60,7 +60,7 @@ bench("Circular reference with ref", () => {
     s.ref("documents", () => sDocument),
     (target) => ({ parent: target }),
   );
-}).types([547, "instantiations"]);
+}).types([735, "instantiations"]);
 
 bench("Add a single relation between 2 subjects", () => {
   const sUser = s.subject("users");
@@ -69,7 +69,7 @@ bench("Add a single relation between 2 subjects", () => {
     () => sUser,
     (target) => ({ owner: target }),
   );
-}).types([486, "instantiations"]);
+}).types([705, "instantiations"]);
 
 bench("2 relations on same subject", () => {
   const sUser = s.subject("users");
@@ -85,7 +85,7 @@ bench("2 relations on same subject", () => {
       () => sUser,
       (target) => ({ editors: target }),
     );
-}).types([814, "instantiations"]);
+}).types([1027, "instantiations"]);
 
 bench("3 relations on same subject", () => {
   const sUser = s.subject("users");
@@ -106,7 +106,7 @@ bench("3 relations on same subject", () => {
       () => sUser,
       (target) => ({ deletedBy: target }),
     );
-}).types([1105, "instantiations"]);
+}).types([1373, "instantiations"]);
 
 bench("3 relations on same subject that has a relation", () => {
   const sTeam = s.subject("teams");
@@ -132,7 +132,7 @@ bench("3 relations on same subject that has a relation", () => {
       () => sUser,
       (target) => ({ deletedBy: target }),
     );
-}).types([1628, "instantiations"]);
+}).types([1950, "instantiations"]);
 
 bench("Simple action", () => {
   const sUser = s.subject("users");
@@ -144,7 +144,7 @@ bench("Simple action", () => {
       (target) => ({ owner: target }),
     )
     .action("edit", (relations) => relations.owner);
-}).types([713, "instantiations"]);
+}).types([933, "instantiations"]);
 
 bench("2 simple actions", () => {
   const sUser = s.subject("users");
@@ -157,7 +157,7 @@ bench("2 simple actions", () => {
     )
     .action("edit", (relations) => relations.owner)
     .action("delete", (relations) => relations.owner);
-}).types([991, "instantiations"]);
+}).types([1213, "instantiations"]);
 
 bench("Complex action", () => {
   const sUser = s.subject("users");
@@ -179,4 +179,34 @@ bench("Complex action", () => {
         and(not(relations.owner), relations.editor),
       ),
     );
-}).types([1231, "instantiations"]);
+}).types([1465, "instantiations"]);
+
+bench("Single attributes", () => {
+  const sUser = s
+    .subject("users")
+    .attribute("isAdmin", () => ({ role: "admin" }));
+  const sDocument = s.subject("documents").relation(
+    "owner",
+    () => sUser,
+    (target) => ({ owner: target.with("isAdmin") }),
+  );
+}).types([900, "instantiations"]);
+
+bench("Multiple attributes", () => {
+  const sUser = s
+    .subject("users")
+    .attribute("isAdmin", () => ({ role: "admin" }))
+    .attribute("isEditor", () => ({ role: "editor" }))
+    .attribute("idLessThan", (n: number) => ({ id: { $lt: n } }));
+  const sDocument = s
+    .subject("documents")
+    .relation(
+      "owner",
+      () => sUser,
+      (target) => ({
+        owner: target.with("isAdmin").with("isEditor").with("idLessThan", 5),
+      }),
+    )
+    .attribute("isDeleted", () => ({ $not: { deletedById: null } }))
+    .attribute("hasParent", () => ({ $not: { parent: {} } }));
+}).types([1476, "instantiations"]);
