@@ -1,5 +1,13 @@
 # @rebats/express
 
+## 0.0.5
+
+### Patch Changes
+
+- 0727690: Added nested relations
+- Updated dependencies [0727690]
+  - @rebats/core@0.0.16
+
 ## 0.0.4
 
 ### Patch Changes

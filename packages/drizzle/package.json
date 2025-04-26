@@ -1,6 +1,6 @@
 {
   "name": "@rebats/drizzle",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Drizzle ORM adapter for RebaTS",
   "license": "MIT",
   "publishConfig": {

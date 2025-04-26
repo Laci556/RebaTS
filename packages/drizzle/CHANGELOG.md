@@ -1,5 +1,13 @@
 # @rebats/drizzle
 
+## 0.0.16
+
+### Patch Changes
+
+- 0727690: Added nested relations
+- Updated dependencies [0727690]
+  - @rebats/core@0.0.16
+
 ## 0.0.15
 
 ### Patch Changes
