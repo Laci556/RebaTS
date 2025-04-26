@@ -9,6 +9,8 @@ import {
 } from "./permission-check";
 import type { AnySubject } from "./subject";
 
+const checkHelpers = createCheckHelpers();
+
 export class Action<
   Schema extends CommonSchema,
   Name extends string,
@@ -41,7 +43,7 @@ export class Action<
     this.parent = parent;
     this.authCheck = checkFn(
       createRelationsProxyForAuthCheck(parent),
-      createCheckHelpers(),
+      checkHelpers,
     );
   }
 

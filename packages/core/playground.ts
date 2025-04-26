@@ -4,7 +4,7 @@ import type { ManySchemaRelation, OneSchemaRelation } from "./src/schema";
 
 const adapter = {
   can: (a: any, b: any) => {
-    console.log(a, b);
+    return { success: true };
   },
 } as unknown as DatabaseAdapter<{
   tables: {
@@ -54,6 +54,11 @@ const sUser = s
 const sDocument = s
   .subject("documents")
   .relation(
+    "parent",
+    s.ref("documents", () => sDocument),
+    (target) => ({ parent: target }),
+  )
+  .relation(
     "owner",
     () => sUser,
     (target) => ({ owner: target.with("role", ["admin"]) }),
@@ -61,13 +66,8 @@ const sDocument = s
   .relation(
     "editor",
     () => sUser,
-    (target) => ({ editors: target }),
+    (target, { owner }, { or }) => or({ editors: target }, owner),
   )
   .action("delete", (t, { or, not, and }) =>
     or(and(t.editor, not(t.owner)), and(not(t.editor), t.owner)),
   );
-
-adapter.can(
-  sUser.select({ id: 1 }),
-  sDocument.delete.select({ id: 1, $or: [{ deletedById: null }] }),
-);

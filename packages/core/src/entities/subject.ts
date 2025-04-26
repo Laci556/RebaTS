@@ -72,7 +72,7 @@ export class Subject<
     reference: () => TargetSubject,
     connection: RelationConnectionFn<
       Schema,
-      Subject<Schema, Name, Relations, Actions>,
+      Subject<Schema, Name, Relations>,
       TargetSubject
     >,
   ): SubjectWithActions<
@@ -83,7 +83,7 @@ export class Subject<
         ? Relation<
             Schema,
             RelationName,
-            Subject<Schema, Name, Relations, Actions>,
+            Subject<Schema, Name, Relations, Actions, Attributes>,
             TargetSubject
           >
         : Relations[Key];
@@ -103,7 +103,10 @@ export class Subject<
     ResultName extends GetTableNames<Schema>,
   >(
     actionName: ActionName,
-    checkFn: CheckFn<Subject<Schema, Name, Relations, Actions>, ResultName>,
+    checkFn: CheckFn<
+      Subject<Schema, Name, Relations, Actions, Attributes>,
+      ResultName
+    >,
   ): SubjectWithActions<
     Schema,
     Name,
@@ -113,7 +116,7 @@ export class Subject<
         ? Action<
             Schema,
             ActionName,
-            Subject<Schema, Name, Relations, Actions>,
+            Subject<Schema, Name, Relations, Actions, Attributes>,
             ResultName
           >
         : Actions[Key];

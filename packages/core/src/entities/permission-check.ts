@@ -1,9 +1,11 @@
-import { RelationRef, type SelectQuery } from "../query";
+import { RelationRef } from "../query";
 import { entityType } from "./entity-type";
 import type { AnyRelation } from "./relation";
+import {
+  createParentNestedRelationsProxy,
+  nestedRelationCheckHelpers,
+} from "./relation-check";
 import type { AnySubject, SubjectSelect } from "./subject";
-
-const permissionCheckType = Symbol("permissionCheckType");
 
 export abstract class PermissionCheck<Target extends string> {
   declare readonly _: {
@@ -11,11 +13,6 @@ export abstract class PermissionCheck<Target extends string> {
   };
 
   public readonly [entityType] = "permissionCheck";
-  public readonly [permissionCheckType]: string;
-
-  constructor(type: string) {
-    this[permissionCheckType] = type;
-  }
 
   public abstract toQuery(subject: SubjectSelect<any, any>): any;
 }
@@ -23,58 +20,54 @@ export abstract class PermissionCheck<Target extends string> {
 export class RelationCheck<
   Target extends string,
 > extends PermissionCheck<Target> {
-  declare public readonly [permissionCheckType]: "relation";
-
   constructor(private readonly child: AnyRelation) {
-    super("relation");
+    super();
   }
 
-  public toQuery(who: SubjectSelect<any, any>): SelectQuery<any, any> {
-    return this.child.connectionFn(
-      new RelationRef<any, any>(who.outputSubject, who.query),
-    );
+  public toQuery(who: SubjectSelect<any, any>): any {
+    return this.child
+      .connectionFn(
+        new RelationRef<any, any>(who.outputSubject, who.query),
+        createParentNestedRelationsProxy(this.child.parent),
+        nestedRelationCheckHelpers,
+      )
+      .toQuery(who.query);
   }
 }
 
 export class OrCheck<Target extends string> extends PermissionCheck<Target> {
-  declare public readonly [permissionCheckType]: "or";
-
   constructor(private readonly children: PermissionCheck<Target>[]) {
-    super("or");
+    super();
   }
 
-  public toQuery(who: SubjectSelect<any, any>): SelectQuery<any, any> {
+  public toQuery(who: SubjectSelect<any, any>): any {
     return {
       $or: this.children.map((child) => child.toQuery(who)),
-    } as any;
+    };
   }
 }
 
 export class AndCheck<Target extends string> extends PermissionCheck<Target> {
-  declare public readonly [permissionCheckType]: "and";
-
   constructor(private readonly children: PermissionCheck<Target>[]) {
-    super("and");
+    super();
   }
 
-  public toQuery(who: SubjectSelect<any, any>): SelectQuery<any, any> {
+  public toQuery(who: SubjectSelect<any, any>): any {
     return {
       $and: this.children.map((child) => child.toQuery(who)),
-    } as any;
+    };
   }
 }
 
 export class NotCheck<Target extends string> extends PermissionCheck<Target> {
-  declare public readonly [permissionCheckType]: "not";
-
   constructor(private readonly child: PermissionCheck<Target>) {
-    super("not");
+    super();
   }
 
-  public toQuery(who: SubjectSelect<any, any>): SelectQuery<any, any> {
+  public toQuery(who: SubjectSelect<any, any>): any {
     return {
       $not: this.child.toQuery(who),
-    } as any;
+    };
   }
 }
 
@@ -121,7 +114,7 @@ export function createRelationsProxyForAuthCheck<Parent extends AnySubject>(
   return new Proxy<CheckRelationsProxy<Parent>>({} as any, {
     get: (_, prop) => {
       if (typeof prop !== "string" || !parent["relationsMap"].has(prop)) {
-        throw new TypeError(`Invalid relation`);
+        throw new TypeError("Invalid relation");
       }
 
       return new RelationCheck(parent["relationsMap"].get(prop)!);

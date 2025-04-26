@@ -117,13 +117,13 @@ const sDocument = s
     "owner",
     () => sUser,
     (user) => ({
-      owner: user.with("role", "admin").with("idLowerThan", 1),
+      owner: user.with("role", "admin"),
     }),
   )
   .relation(
     "editor",
     () => sUser,
-    (user) => ({ editors: user }),
+    (user, p, { or }) => or({ editors: user }, p.owner),
   )
   .relation(
     "team",
@@ -131,7 +131,7 @@ const sDocument = s
     (team) => ({ team: team }),
   )
   .action("delete", (doc) => doc.owner)
-  .action("edit", (doc) => doc.owner)
+  .action("edit", (doc) => doc.editor)
   .action("createComment", (doc) => doc.team);
 
 const authzClient = initClient(adapter);
@@ -139,10 +139,3 @@ const authzClient = initClient(adapter);
 // client.query.users.findFirst({
 //   where: { id: {} },
 // });
-
-console.log(
-  await authzClient.can(
-    sUser.select({ id: 1 }),
-    sDocument.edit.select({ id: 1 }),
-  ),
-);

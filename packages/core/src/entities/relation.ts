@@ -1,22 +1,14 @@
-import type { RelationRefPlaceholder, SchemaQuery } from "../query";
+import { type RelationRefPlaceholder } from "../query";
 import type { CommonSchema } from "../schema";
 import { entityType } from "./entity-type";
+import {
+  NestedRelationCheck,
+  RootNestedRelationCheck,
+  type NestedRelationCheckHelpers,
+  type NestedRelationCheckOrQuery,
+  type ParentRelationsProxy,
+} from "./relation-check";
 import type { AnySubject } from "./subject";
-
-/*
-const parentRelationPlaceholderSymbol: unique symbol = Symbol(
-  "parentRelationPlaceholder",
-);
-
-type ParentRelationPlaceholder = Branded<
-  {},
-  typeof parentRelationPlaceholderSymbol
->;
-
-type ParentRelationsProxy<S extends AnySubject> = {
-  [Key in keyof S["_"]["relations"]]: ParentRelationPlaceholder;
-};
-*/
 
 export type RelationConnectionFn<
   Schema extends CommonSchema,
@@ -27,9 +19,17 @@ export type RelationConnectionFn<
     TargetSubject["_"]["name"],
     TargetSubject["_"]["attributes"]
   >,
-  // parent: ParentRelationsProxy<ParentSubject>,
-  // TODO: union, intersection
-) => SchemaQuery<
+  parent: ParentRelationsProxy<
+    Schema,
+    ParentSubject,
+    TargetSubject["_"]["name"]
+  >,
+  helpers: NestedRelationCheckHelpers<
+    Schema,
+    ParentSubject["_"]["name"],
+    TargetSubject["_"]["name"]
+  >,
+) => NestedRelationCheckOrQuery<
   Schema,
   ParentSubject["_"]["name"],
   TargetSubject["_"]["name"]
@@ -58,7 +58,7 @@ export class Relation<
   public readonly name: Name;
   public readonly parent: AnySubject;
   public readonly reference: () => AnySubject;
-  public readonly connectionFn: RelationConnectionFn<
+  private readonly _connectionFn: RelationConnectionFn<
     Schema,
     ParentSubject,
     TargetSubject
@@ -73,7 +73,34 @@ export class Relation<
     this.name = name;
     this.parent = parent;
     this.reference = reference;
-    this.connectionFn = connectionFn;
+    this._connectionFn = connectionFn;
+  }
+
+  public connectionFn(
+    target: RelationRefPlaceholder<
+      TargetSubject["_"]["name"],
+      TargetSubject["_"]["attributes"]
+    >,
+    parent: ParentRelationsProxy<
+      Schema,
+      ParentSubject,
+      TargetSubject["_"]["name"]
+    >,
+    helpers: NestedRelationCheckHelpers<
+      Schema,
+      ParentSubject["_"]["name"],
+      TargetSubject["_"]["name"]
+    >,
+  ): NestedRelationCheck<
+    Schema,
+    ParentSubject["_"]["name"],
+    TargetSubject["_"]["name"]
+  > {
+    const connection = this._connectionFn(target, parent, helpers);
+    if (connection instanceof NestedRelationCheck) {
+      return connection;
+    }
+    return new RootNestedRelationCheck(connection);
   }
 }
 
