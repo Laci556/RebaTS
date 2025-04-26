@@ -82,11 +82,7 @@ export class ParentNestedRelationCheck<
 
   public toQuery(query: any): any {
     return this.child
-      .connectionFn(
-        new RelationRef(this.child.reference(), query),
-        createParentNestedRelationsProxy(this.child.parent),
-        nestedRelationCheckHelpers,
-      )
+      .connectionFn(new RelationRef(this.child.reference(), query))
       .toQuery(query);
   }
 }

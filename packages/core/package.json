@@ -29,17 +29,19 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "test": "tsc -p tsconfig.test.json && bun test",
+    "test": "vitest run --typecheck",
+    "test:watch": "vitest watch --typecheck",
     "benchmark": "tsx ./benches/subject.bench.ts",
     "publish-package": "bun publish --provenance --access public"
   },
   "devDependencies": {
     "@ark/attest": "^0.45.11",
     "@rebats/prettier": "workspace:*",
+    "@total-typescript/shoehorn": "^0.1.2",
     "@types/bun": "latest",
-    "expect-type": "^1.2.1",
     "tsup": "^8.4.0",
-    "tsx": "^4.19.3"
+    "tsx": "^4.19.3",
+    "vitest": "^3.1.2"
   },
   "peerDependencies": {
     "typescript": "^5.7.3"

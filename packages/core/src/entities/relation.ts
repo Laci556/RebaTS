@@ -2,7 +2,9 @@ import { type RelationRefPlaceholder } from "../query";
 import type { CommonSchema } from "../schema";
 import { entityType } from "./entity-type";
 import {
+  createParentNestedRelationsProxy,
   NestedRelationCheck,
+  nestedRelationCheckHelpers,
   RootNestedRelationCheck,
   type NestedRelationCheckHelpers,
   type NestedRelationCheckOrQuery,
@@ -81,22 +83,16 @@ export class Relation<
       TargetSubject["_"]["name"],
       TargetSubject["_"]["attributes"]
     >,
-    parent: ParentRelationsProxy<
-      Schema,
-      ParentSubject,
-      TargetSubject["_"]["name"]
-    >,
-    helpers: NestedRelationCheckHelpers<
-      Schema,
-      ParentSubject["_"]["name"],
-      TargetSubject["_"]["name"]
-    >,
   ): NestedRelationCheck<
     Schema,
     ParentSubject["_"]["name"],
     TargetSubject["_"]["name"]
   > {
-    const connection = this._connectionFn(target, parent, helpers);
+    const connection = this._connectionFn(
+      target,
+      createParentNestedRelationsProxy(this.parent as ParentSubject),
+      nestedRelationCheckHelpers as any,
+    );
     if (connection instanceof NestedRelationCheck) {
       return connection;
     }

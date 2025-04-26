@@ -1,10 +1,6 @@
 import { RelationRef } from "../query";
 import { entityType } from "./entity-type";
 import type { AnyRelation } from "./relation";
-import {
-  createParentNestedRelationsProxy,
-  nestedRelationCheckHelpers,
-} from "./relation-check";
 import type { AnySubject, SubjectSelect } from "./subject";
 
 export abstract class PermissionCheck<Target extends string> {
@@ -26,11 +22,7 @@ export class RelationCheck<
 
   public toQuery(who: SubjectSelect<any, any>): any {
     return this.child
-      .connectionFn(
-        new RelationRef<any, any>(who.outputSubject, who.query),
-        createParentNestedRelationsProxy(this.child.parent),
-        nestedRelationCheckHelpers,
-      )
+      .connectionFn(new RelationRef<any, any>(who.outputSubject, who.query))
       .toQuery(who.query);
   }
 }

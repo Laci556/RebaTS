@@ -37,14 +37,15 @@
     },
     "packages/core": {
       "name": "@rebats/core",
-      "version": "0.0.14",
+      "version": "0.0.16",
       "devDependencies": {
         "@ark/attest": "^0.45.11",
         "@rebats/prettier": "workspace:*",
+        "@total-typescript/shoehorn": "^0.1.2",
         "@types/bun": "latest",
-        "expect-type": "^1.2.1",
         "tsup": "^8.4.0",
         "tsx": "^4.19.3",
+        "vitest": "^3.1.2",
       },
       "peerDependencies": {
         "typescript": "^5.7.3",
@@ -52,7 +53,7 @@
     },
     "packages/drizzle": {
       "name": "@rebats/drizzle",
-      "version": "0.0.14",
+      "version": "0.0.16",
       "devDependencies": {
         "@electric-sql/pglite": "^0.2.17",
         "@libsql/client": "^0.15.2",
@@ -73,7 +74,7 @@
     },
     "packages/express": {
       "name": "@rebats/express",
-      "version": "0.0.3",
+      "version": "0.0.5",
       "devDependencies": {
         "@rebats/core": "workspace:*",
         "@rebats/prettier": "workspace:*",
@@ -103,7 +104,7 @@
     },
     "packages/prisma": {
       "name": "@rebats/prisma",
-      "version": "0.0.14",
+      "version": "0.0.16",
       "devDependencies": {
         "@rebats/core": "workspace:*",
         "@rebats/prettier": "workspace:*",
@@ -112,7 +113,6 @@
         "tsup": "^8.4.0",
       },
       "peerDependencies": {
-        "@prisma/client": "^6.6.0",
         "@rebats/core": "workspace:*",
         "typescript": "^5.0.0",
       },

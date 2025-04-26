@@ -139,3 +139,10 @@ const authzClient = initClient(adapter);
 // client.query.users.findFirst({
 //   where: { id: {} },
 // });
+
+console.log(
+  await authzClient.can(
+    sUser.select({ id: 1 }),
+    sDocument.delete.select({ id: 2 }),
+  ),
+);
