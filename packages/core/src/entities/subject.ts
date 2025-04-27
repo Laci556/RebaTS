@@ -220,8 +220,6 @@ class SubjectBuilder<Schema extends CommonSchema> {
   ): () => AnySubject<CommonSchema, Name> {
     return args[args.length - 1] as any;
   }
-
-  // TODO: root
 }
 
 export function initSubjectBuilder<Schema extends CommonSchema>(
