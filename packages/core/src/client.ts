@@ -4,15 +4,10 @@ import type { SubjectSelect } from "./entities/subject";
 import type { CommonSchema, GetTableNames } from "./schema";
 import type { RebaTSTypeError } from "./utils";
 
-type ClientOptions = {};
-
 export class RebaTSClient<Schema extends CommonSchema>
   implements Authorizable<Schema>
 {
-  constructor(
-    private readonly adapter: DatabaseAdapter<Schema>,
-    private readonly options?: ClientOptions,
-  ) {}
+  constructor(private readonly adapter: DatabaseAdapter<Schema>) {}
 
   public can<A extends GetTableNames<Schema>, B extends GetTableNames<Schema>>(
     who: SubjectSelect<Schema, A>,
@@ -26,7 +21,6 @@ export class RebaTSClient<Schema extends CommonSchema>
 
 export function initClient<Schema extends CommonSchema>(
   adapter: DatabaseAdapter<Schema>,
-  options?: ClientOptions,
 ) {
-  return new RebaTSClient(adapter, options);
+  return new RebaTSClient(adapter);
 }
