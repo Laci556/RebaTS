@@ -84,6 +84,7 @@ export class DrizzleAdapter<
         return {
           success: false,
           error: "unknown",
+          reason: "No result from query",
         };
       }
 
@@ -111,6 +112,7 @@ export class DrizzleAdapter<
       return {
         success: false,
         error: "unknown",
+        reason: error,
       };
     }
   }

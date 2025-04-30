@@ -6,7 +6,7 @@ import type { RebaTSTypeError } from "./utils";
 export type AuthorizationError = "forbidden" | "not_found" | "unknown";
 export type AuthorizeResult =
   | { success: true; error?: never }
-  | { success: false; error: AuthorizationError };
+  | { success: false; error: AuthorizationError; reason?: any };
 
 export interface Authorizable<Schema extends CommonSchema> {
   can<A extends GetTableNames<Schema>, B extends GetTableNames<Schema>>(

@@ -39,7 +39,7 @@
     "@rebats/prettier": "workspace:*",
     "@types/bun": "latest",
     "@types/pg": "^8.11.11",
-    "drizzle-kit": "beta",
+    "drizzle-kit": "1.0.0-beta.1-c0277c0",
     "expect-type": "^1.2.1",
     "pg": "^8.14.1",
     "tsup": "^8.4.0"
