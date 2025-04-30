@@ -38,8 +38,9 @@ export interface RebaTSAuthConfig {
   notFoundBehavior?: NotFoundBehavior;
 }
 
-export interface RebaTSModuleOptions extends RebaTSAuthConfig {
-  adapter: DatabaseAdapter<CommonSchema>;
+export interface RebaTSModuleOptions<Schema extends CommonSchema>
+  extends RebaTSAuthConfig {
+  adapter: DatabaseAdapter<Schema>;
 }
 
 export class RebaTSForbiddenException extends ForbiddenException {}

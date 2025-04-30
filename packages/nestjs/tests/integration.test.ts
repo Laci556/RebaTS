@@ -74,7 +74,11 @@ describe("NestJS - integration", () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [RebaTSModule.forRoot({ adapter: fromPartial(adapterMock) })],
+      imports: [
+        RebaTSModule.forRoot({
+          adapter: fromPartial<DatabaseAdapter<any>>(adapterMock),
+        }),
+      ],
       controllers: [TestController],
     }).compile();
 

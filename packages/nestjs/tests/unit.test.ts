@@ -29,7 +29,7 @@ describe("Authorize", () => {
         }),
     }),
   }: Partial<{
-    options: RebaTSModuleOptions;
+    options: RebaTSModuleOptions<any>;
     metadata: AuthSelector<any, any, any, any>;
     context: ExecutionContext;
   }>) => {

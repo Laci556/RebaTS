@@ -21,10 +21,9 @@ import {
 export class RebaTSGuard implements CanActivate {
   constructor(
     @Inject(REBATS_MODULE_OPTIONS_TOKEN)
-    private readonly options: RebaTSModuleOptions,
+    private readonly options: RebaTSModuleOptions<any>,
     @Inject(REBATS_CLIENT)
     private readonly client: RebaTSClient<any>,
-    @Inject(Reflector)
     private readonly reflector: Reflector,
   ) {}
 
