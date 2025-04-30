@@ -67,7 +67,7 @@ describe("Express middleware - integration", () => {
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   test("Should skip authorization", async () => {
