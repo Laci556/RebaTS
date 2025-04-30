@@ -24,6 +24,7 @@ export class RebaTSGuard implements CanActivate {
     private readonly options: RebaTSModuleOptions<any>,
     @Inject(REBATS_CLIENT)
     private readonly client: RebaTSClient<any>,
+    @Inject(Reflector)
     private readonly reflector: Reflector,
   ) {}
 
