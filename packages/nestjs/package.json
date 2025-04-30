@@ -1,6 +1,6 @@
 {
   "name": "@rebats/nestjs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "NestJS adapter for RebaTS",
   "license": "MIT",
   "publishConfig": {
