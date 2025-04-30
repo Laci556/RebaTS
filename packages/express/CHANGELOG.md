@@ -1,5 +1,13 @@
 # @rebats/express
 
+## 0.0.6
+
+### Patch Changes
+
+- 06104be: Added error reason to AuthResult, updated drizzle-orm to latest beta
+- Updated dependencies [06104be]
+  - @rebats/core@0.0.17
+
 ## 0.0.5
 
 ### Patch Changes
