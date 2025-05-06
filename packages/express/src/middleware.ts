@@ -24,14 +24,14 @@ declare global {
   }
 }
 
-function getError(type: AuthorizationError) {
+function getError(type: AuthorizationError, reason?: any) {
   switch (type) {
     case "forbidden":
-      return new ForbiddenError();
+      return new ForbiddenError(reason);
     case "not_found":
-      return new NotFoundError();
+      return new NotFoundError(reason);
     default:
-      return new UnknownAuthorizationError();
+      return new UnknownAuthorizationError(reason);
   }
 }
 
@@ -82,6 +82,7 @@ export function authorize<
             config.notFoundBehavior === "forbidden"
             ? "forbidden"
             : authResult.error,
+          authResult.reason,
         ),
       );
     } catch (error) {

@@ -58,17 +58,18 @@ export class RebaTSGuard implements CanActivate {
         config.notFoundBehavior === "forbidden"
         ? "forbidden"
         : authResult.error,
+      authResult.reason,
     );
   }
 
-  private getError(type: AuthorizationError) {
+  private getError(type: AuthorizationError, reason?: any) {
     switch (type) {
       case "forbidden":
-        return new RebaTSForbiddenException();
+        return new RebaTSForbiddenException(reason);
       case "not_found":
-        return new RebaTSNotFoundException();
+        return new RebaTSNotFoundException(reason);
       case "unknown":
-        return new RebaTSUnknownException();
+        return new RebaTSUnknownException(reason);
     }
   }
 }

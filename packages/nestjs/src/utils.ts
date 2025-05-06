@@ -43,6 +43,18 @@ export interface RebaTSModuleOptions<Schema extends CommonSchema>
   adapter: DatabaseAdapter<Schema>;
 }
 
-export class RebaTSForbiddenException extends ForbiddenException {}
-export class RebaTSNotFoundException extends NotFoundException {}
-export class RebaTSUnknownException extends InternalServerErrorException {}
+export class RebaTSForbiddenException extends ForbiddenException {
+  constructor(public reason?: any) {
+    super();
+  }
+}
+export class RebaTSNotFoundException extends NotFoundException {
+  constructor(public reason?: any) {
+    super();
+  }
+}
+export class RebaTSUnknownException extends InternalServerErrorException {
+  constructor(public reason?: any) {
+    super();
+  }
+}

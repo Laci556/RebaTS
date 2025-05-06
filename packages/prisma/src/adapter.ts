@@ -127,10 +127,11 @@ export class PrismaAdapter<
 
         return { success: true };
       });
-    } catch {
+    } catch (error) {
       return {
         success: false,
         error: "unknown",
+        reason: error,
       };
     }
   }

@@ -42,7 +42,7 @@ export class ForbiddenError extends Error {
   public name = "ForbiddenError";
   public statusCode = 403;
 
-  constructor() {
+  constructor(public reason?: any) {
     super("Forbidden");
   }
 }
@@ -52,7 +52,7 @@ export class NotFoundError extends Error {
   public name = "NotFoundError";
   public statusCode = 404;
 
-  constructor() {
+  constructor(public reason?: any) {
     super("Not Found");
   }
 }
@@ -62,7 +62,7 @@ export class UnknownAuthorizationError extends Error {
   public name = "UnknownAuthorizationError";
   public statusCode = 500;
 
-  constructor() {
+  constructor(public reason?: any) {
     super("Unknown authorization error");
   }
 }
