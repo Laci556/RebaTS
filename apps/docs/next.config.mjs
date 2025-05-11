@@ -9,6 +9,7 @@ const config = {
     {
       source: "/",
       destination: "/docs",
+      permanent: false,
     },
   ],
 };
