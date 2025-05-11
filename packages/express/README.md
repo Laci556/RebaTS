@@ -67,7 +67,4 @@ this.
 
 ## Advanced
 
-For advanced usage, check out the
-[full documentation](https://github.com/Laci556/RebaTS).
-
-<!-- TODO: add docs -->
+For advanced usage, check out the [full documentation](https://rebats.dev).

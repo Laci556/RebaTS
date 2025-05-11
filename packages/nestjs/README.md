@@ -96,7 +96,4 @@ proper status code that you can handle in your exception filter.
 
 ## Advanced
 
-For advanced usage, check out the
-[full documentation](https://github.com/Laci556/RebaTS).
-
-<!-- TODO: add docs -->
+For advanced usage, check out the [full documentation](https://rebats.dev).

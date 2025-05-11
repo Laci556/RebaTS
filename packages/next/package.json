@@ -1,0 +1,61 @@
+{
+  "name": "@rebats/next",
+  "version": "0.0.1",
+  "description": "Next.js server adapter for RebaTS",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Laci556/RebaTS.git",
+    "directory": "packages/next"
+  },
+  "type": "module",
+  "module": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run --typecheck",
+    "test:watch": "vitest watch --typecheck",
+    "publish-package": "bun publish --provenance --access public"
+  },
+  "devDependencies": {
+    "@rebats/core": "workspace:*",
+    "@rebats/prettier": "workspace:*",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@total-typescript/shoehorn": "^0.1.2",
+    "@types/bun": "latest",
+    "@types/supertest": "^6.0.3",
+    "@vitejs/plugin-react": "^4.4.1",
+    "happy-dom": "^17.4.7",
+    "next": "^15.3.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "supertest": "^7.1.0",
+    "tsup": "^8.4.0",
+    "vitest": "^3.1.2"
+  },
+  "peerDependencies": {
+    "@rebats/core": "workspace:*",
+    "next": "^14.0.0 || ^15.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "typescript": "^5.0.0"
+  }
+}
